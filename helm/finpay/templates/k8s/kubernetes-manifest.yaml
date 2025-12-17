@@ -1,0 +1,126 @@
+# 2️⃣ User Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: user-service
+    version: v1
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: user-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: user-service
+        version: v1
+    spec:
+      containers:
+      - name: user-service
+        image: {{ .Values.image.registry }}/{{ .Values.services.user.name }}:{{ .Values.services.user.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+---
+# 3️⃣ User Service (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: user-service
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+---
+# 4️⃣ Payment Service Deployment (v1)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service-v1
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: payment-service
+    version: v1
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: payment-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: payment-service
+        version: v1
+    spec:
+      containers:
+      - name: payment-service
+        image: {{ .Values.image.registry }}/{{ .Values.services.payment.name }}:{{ .Values.services.payment.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+---
+# 5️⃣ Payment Service (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: payment-service
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+---
+# 6️⃣ Transaction Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: transaction-service
+    version: v1
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: transaction-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: transaction-service
+        version: v1
+    spec:
+      containers:
+      - name: transaction-service
+        image: {{ .Values.image.registry }}/{{ .Values.services.transaction.name }}:{{ .Values.services.transaction.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+---
+# 7️⃣ Transaction Service (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: transaction-service
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+

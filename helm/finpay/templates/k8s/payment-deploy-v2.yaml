@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service-v2
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: payment-service
+    version: v2
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: payment-service
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: payment-service
+        version: v2
+    spec:
+      containers:
+      - name: payment-service
+        image: {{ .Values.services.payment.v2Repository }}:{{ .Values.services.payment.v2Tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: VERSION
+          value: "v2"
+        ports:
+        - containerPort: 8080
